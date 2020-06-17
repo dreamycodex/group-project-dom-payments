@@ -55,8 +55,6 @@ document.querySelector("#loadButton").addEventListener("click", function() {
     .then(payments => {
       account.payments = payments;
       render(account);
-      renderCurrentBalance(account);
-      renderPendingBalance(account);
     });
 });
 
@@ -76,6 +74,8 @@ document.querySelector("#loadButton").addEventListener("click", function() {
 function render(account) {
   // Display the account number
   document.querySelector("#accountNumber").innerText = account.number;
+  renderCurrentBalance(account);
+  renderPendingBalance(account);
 }
 
 /**
