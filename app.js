@@ -73,6 +73,8 @@ document.querySelector("#loadButton").addEventListener("click", function() {
 function render(account) {
   // Display the account number
   document.querySelector("#accountNumber").innerText = account.number;
+  renderTotalIncome(account);
+  renderMostValuablePayment(account);
 }
 
 /**
@@ -95,7 +97,9 @@ function renderTotalIncome(account) {
     let mayDated = payment.date.split("-");
     return mayDated[1] == "05";
   }
-  document.querySelector("#totalIncome").textContent = `£${totalIncome}`;
+  document.querySelector(
+    "#totalIncome"
+  ).textContent = `£${totalIncomePayments}`;
 }
 
 //No 5: Show the amount of the most valuable payment that was received this month (May 2019.
