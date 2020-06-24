@@ -36,7 +36,7 @@
 var account = {
   number: 100402153,
   initialBalance: 100,
-  paymentsUrl: '/data/payments.json',
+  paymentsUrl: "/data/payments.json",
   payments: []
 };
 
@@ -48,15 +48,14 @@ var account = {
  *
  * You may edit this code.
  */
-document.querySelector('#loadButton')
-  .addEventListener('click', function () {
-    fetch(account.paymentsUrl)
-      .then(response => response.json())
-      .then(payments => {
-        account.payments = payments;
-        render(account);
-      });
-  });
+document.querySelector("#loadButton").addEventListener("click", function() {
+  fetch(account.paymentsUrl)
+    .then(response => response.json())
+    .then(payments => {
+      account.payments = payments;
+      render(account);
+    });
+});
 
 /**
  * Write a render function below that updates the DOM with the
@@ -72,11 +71,12 @@ document.querySelector('#loadButton')
  * @param {Object} account The account details
  */
 function render(account) {
-
   // Display the account number
-  document.querySelector('#accountNumber')
-    .innerText = account.number;
-};
+  document.querySelector("#accountNumber").innerText = account.number;
+
+  //render payments
+  renderPayments(account);
+}
 
 /**
  * Write any additional functions that you need to complete
@@ -86,3 +86,64 @@ function render(account) {
  * calculate balances, find completed or pending payments,
  * add up payments, and more.
  */
+
+//to show all payments
+function renderPayments(account) {
+  let paymentTable = document.querySelector("#paymentsList");
+  paymentTable.innerHTML = "";
+  account.payments.forEach(showPayment);
+}
+
+//creating payment table cells
+function showPayment(payment) {
+  let paymentTable = document.querySelector("#paymentsList");
+  let row = paymentTable.insertRow();
+  let tableCell1 = row.insertCell(0);
+  let tableCell2 = row.insertCell(1);
+  let tableCell3 = row.insertCell(2);
+  let tableCell4 = row.insertCell(3);
+  let tableCell5 = row.insertCell(4);
+
+  tableCell1.innerText = payment.date;
+  tableCell2.innerText = completeOrPendingPayment(payment);
+  tableCell3.innerText = payment.description;
+  tableCell4.innerText = payment.amount;
+  if (!payment.completed) {
+    row.className = "pending";
+    tableCell5.appendChild(createButton(payment));
+  }
+}
+
+//to show Complete and Pending payments
+function completeOrPendingPayment(payment) {
+  if (payment.completed) {
+    return "Complete";
+  } else {
+    return "Pending";
+  }
+}
+
+function completeOrPendingPayment(payment) {
+  if (payment.completed) {
+    return "Complete";
+  } else {
+    return "Pending";
+  }
+}
+
+//Adding a cancel button
+function createButton(payment) {
+  let cancelButton = document.createElement("button");
+  cancelButton.innerText = "CANCEL";
+  cancelButton.addEventListener("click", removePendingPayment);
+  return cancelButton;
+}
+
+function removePendingPayment(event) {
+  let button = event.target;
+  let date = button.parentElement.parentElement.firstChild.innerText;
+  account.payments = account.payments.filter(
+    p => p.date !== date || p.completed
+  );
+  render(account);
+}
