@@ -107,22 +107,16 @@ function showPayment(payment) {
   tableCell1.innerText = payment.date;
   tableCell2.innerText = completeOrPendingPayment(payment);
   tableCell3.innerText = payment.description;
-  tableCell4.innerText = payment.amount;
+  tableCell4.innerText = "£" + payment.amount;
+
+  //applying pending class to pending payment
   if (!payment.completed) {
     row.className = "pending";
     tableCell5.appendChild(createButton(payment));
   }
 }
 
-//to show Complete and Pending payments
-function completeOrPendingPayment(payment) {
-  if (payment.completed) {
-    return "Complete";
-  } else {
-    return "Pending";
-  }
-}
-
+//to show Complete/Pending payments
 function completeOrPendingPayment(payment) {
   if (payment.completed) {
     return "Complete";
@@ -139,6 +133,7 @@ function createButton(payment) {
   return cancelButton;
 }
 
+//Removing pending payment and calling the render function
 function removePendingPayment(event) {
   let button = event.target;
   let date = button.parentElement.parentElement.firstChild.innerText;
