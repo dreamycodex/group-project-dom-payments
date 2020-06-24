@@ -93,14 +93,16 @@ function countBalance(account, booleanValue) {
   let allCompletedPayments = account.payments
     .filter(payment => payment.completed == booleanValue)
     .map(obj => obj.amount)
-    .reduce((accumulator, currentValue) => accumulator + currentValue);
+    .reduce((accumulator, currentValue) => accumulator + currentValue, 0); // 1 change
   return allCompletedPayments;
 }
 // calculate and render Current balance
 function renderCurrentBalance(account) {
   let allCompletedPayments = countBalance(account, true);
   let CurrentBalance = account.initialBalance + allCompletedPayments;
-  document.querySelector("#balanceAmount").textContent = `£${CurrentBalance}`;
+  document.querySelector(
+    "#balanceAmount"
+  ).textContent = `£${CurrentBalance.toFixed(2)}`; // 2 change
 }
 
 // calculate and render Pending balance
@@ -109,5 +111,7 @@ function renderPendingBalance(account) {
   let allCompletedPayments = countBalance(account, true);
   let pendingBalance =
     allPendingPayments + allCompletedPayments + account.initialBalance;
-  document.querySelector("#pendingBalance").textContent = `£${pendingBalance}`;
+  document.querySelector(
+    "#pendingBalance"
+  ).textContent = `£${pendingBalance.toFixed(2)}`; // 3 change
 }
