@@ -73,8 +73,16 @@ document.querySelector("#loadButton").addEventListener("click", function() {
 function render(account) {
   // Display the account number
   document.querySelector("#accountNumber").innerText = account.number;
+
   renderTotalIncome(account);
   renderMostValuablePayment(account);
+
+  renderCurrentBalance(account);
+  renderPendingBalance(account);
+
+  //render payments
+  renderPayments(account);
+
 }
 
 /**
@@ -85,6 +93,7 @@ function render(account) {
  * calculate balances, find completed or pending payments,
  * add up payments, and more.
  */
+
 
 //No 4: Total income of all payments that were received this month (May, 2019), including pending payments.
 
@@ -118,4 +127,88 @@ function renderMostValuablePayment(account) {
   document.querySelector(
     "#mostValuablePayment"
   ).textContent = `£${mostValuablePayment}`;
+
+
+// calculate balance
+
+function countBalance(account, booleanValue) {
+  let allCompletedPayments = account.payments
+    .filter(payment => payment.completed == booleanValue)
+    .map(obj => obj.amount)
+    .reduce((accumulator, currentValue) => accumulator + currentValue, 0); // 1 change
+  return allCompletedPayments;
+}
+// calculate and render Current balance
+function renderCurrentBalance(account) {
+  let allCompletedPayments = countBalance(account, true);
+  let CurrentBalance = account.initialBalance + allCompletedPayments;
+  document.querySelector(
+    "#balanceAmount"
+  ).textContent = `£${CurrentBalance.toFixed(2)}`; // 2 change
+}
+
+// calculate and render Pending balance
+function renderPendingBalance(account) {
+  let allPendingPayments = countBalance(account, false);
+  let allCompletedPayments = countBalance(account, true);
+  let pendingBalance =
+    allPendingPayments + allCompletedPayments + account.initialBalance;
+  document.querySelector(
+    "#pendingBalance"
+  ).textContent = `£${pendingBalance.toFixed(2)}`; // 3 change
+
+//to show all payments
+function renderPayments(account) {
+  let paymentTable = document.querySelector("#paymentsList");
+  paymentTable.innerHTML = "";
+  account.payments.forEach(showPayment);
+}
+
+//creating payment table cells
+function showPayment(payment) {
+  let paymentTable = document.querySelector("#paymentsList");
+  let row = paymentTable.insertRow();
+  let tableCell1 = row.insertCell(0);
+  let tableCell2 = row.insertCell(1);
+  let tableCell3 = row.insertCell(2);
+  let tableCell4 = row.insertCell(3);
+  let tableCell5 = row.insertCell(4);
+
+  tableCell1.innerText = payment.date;
+  tableCell2.innerText = completeOrPendingPayment(payment);
+  tableCell3.innerText = payment.description;
+  tableCell4.innerText = "£" + payment.amount;
+
+  //applying pending class to pending payment
+  if (!payment.completed) {
+    row.className = "pending";
+    tableCell5.appendChild(createButton(payment));
+  }
+}
+
+//to show Complete/Pending payments
+function completeOrPendingPayment(payment) {
+  if (payment.completed) {
+    return "Complete";
+  } else {
+    return "Pending";
+  }
+}
+
+//Adding a cancel button
+function createButton(payment) {
+  let cancelButton = document.createElement("button");
+  cancelButton.innerText = "CANCEL";
+  cancelButton.addEventListener("click", removePendingPayment);
+  return cancelButton;
+}
+
+//Removing pending payment and calling the render function
+function removePendingPayment(event) {
+  let button = event.target;
+  let date = button.parentElement.parentElement.firstChild.innerText;
+  account.payments = account.payments.filter(
+    p => p.date !== date || p.completed
+  );
+  render(account);
 }
