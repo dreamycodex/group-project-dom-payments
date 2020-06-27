@@ -48,7 +48,6 @@ var account = {
  *
  * You may edit this code.
  */
-
 document.querySelector("#loadButton").addEventListener("click", function() {
   fetch(account.paymentsUrl)
     .then(response => response.json())
@@ -74,6 +73,10 @@ document.querySelector("#loadButton").addEventListener("click", function() {
 function render(account) {
   // Display the account number
   document.querySelector("#accountNumber").innerText = account.number;
+
+  renderTotalIncome(account);
+  renderMostValuablePayment(account);
+
   renderCurrentBalance(account);
   renderPendingBalance(account);
 
@@ -90,6 +93,40 @@ function render(account) {
  * calculate balances, find completed or pending payments,
  * add up payments, and more.
  */
+
+
+//No 4: Total income of all payments that were received this month (May, 2019), including pending payments.
+
+function renderTotalIncome(account) {
+  let totalIncomePayments = account.payments
+    .filter(mayDated)
+    .map(payment => payment.amount)
+    .reduce((accumulator, currentValue) => accumulator + currentValue);
+  function mayDated(payment) {
+    let mayDated = payment.date.split("-");
+    return mayDated[1] == "05";
+  }
+  document.querySelector(
+    "#totalIncome"
+  ).textContent = `£${totalIncomePayments}`;
+}
+
+//No 5: Show the amount of the most valuable payment that was received this month (May 2019.
+
+function renderMostValuablePayment(account) {
+  let mostValuablePayment = account.payments
+    .filter(mayDated)
+    .map(payment => payment.amount)
+    .reduce(function(a, b) {
+      return Math.max(a, b);
+    });
+  function mayDated(payment) {
+    let mayDated = payment.date.split("-");
+    return mayDated[1] == "05" && payment.completed == true;
+  }
+  document.querySelector(
+    "#mostValuablePayment"
+  ).textContent = `£${mostValuablePayment}`;
 
 
 // calculate balance
