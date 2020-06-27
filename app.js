@@ -48,6 +48,7 @@ var account = {
  *
  * You may edit this code.
  */
+
 document.querySelector("#loadButton").addEventListener("click", function() {
   fetch(account.paymentsUrl)
     .then(response => response.json())
@@ -73,9 +74,12 @@ document.querySelector("#loadButton").addEventListener("click", function() {
 function render(account) {
   // Display the account number
   document.querySelector("#accountNumber").innerText = account.number;
+  renderCurrentBalance(account);
+  renderPendingBalance(account);
 
   //render payments
   renderPayments(account);
+
 }
 
 /**
@@ -86,6 +90,35 @@ function render(account) {
  * calculate balances, find completed or pending payments,
  * add up payments, and more.
  */
+
+
+// calculate balance
+
+function countBalance(account, booleanValue) {
+  let allCompletedPayments = account.payments
+    .filter(payment => payment.completed == booleanValue)
+    .map(obj => obj.amount)
+    .reduce((accumulator, currentValue) => accumulator + currentValue, 0); // 1 change
+  return allCompletedPayments;
+}
+// calculate and render Current balance
+function renderCurrentBalance(account) {
+  let allCompletedPayments = countBalance(account, true);
+  let CurrentBalance = account.initialBalance + allCompletedPayments;
+  document.querySelector(
+    "#balanceAmount"
+  ).textContent = `£${CurrentBalance.toFixed(2)}`; // 2 change
+}
+
+// calculate and render Pending balance
+function renderPendingBalance(account) {
+  let allPendingPayments = countBalance(account, false);
+  let allCompletedPayments = countBalance(account, true);
+  let pendingBalance =
+    allPendingPayments + allCompletedPayments + account.initialBalance;
+  document.querySelector(
+    "#pendingBalance"
+  ).textContent = `£${pendingBalance.toFixed(2)}`; // 3 change
 
 //to show all payments
 function renderPayments(account) {
